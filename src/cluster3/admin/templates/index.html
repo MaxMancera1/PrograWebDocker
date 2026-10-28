@@ -1,0 +1,175 @@
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+    .pd {
+        --cobalto:#2438E0; --cobalto-oscuro:#16238F; --tinta:#10163A; --suave:#5A6286;
+        --amarillo:#FFC93C; --linea:#E3E6F3; --fondo:#F2F4FC;
+        font-family:'Figtree',system-ui,sans-serif; color:var(--tinta);
+        background:var(--fondo); border-radius:28px; padding:2rem;
+    }
+    .pd-titulo { margin:0 0 1.75rem; }
+    .pd-titulo h1 { font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:clamp(1.7rem,3.2vw,2.4rem); letter-spacing:-.02em; margin:0; }
+    .pd-titulo p { margin:.35rem 0 0; color:var(--suave); max-width:60ch; }
+
+    .pd-hero {
+        position:relative; overflow:hidden; height:100%;
+        background:linear-gradient(160deg,var(--cobalto) 0%,var(--cobalto-oscuro) 100%);
+        color:#fff; border-radius:28px 28px 28px 8px; padding:2rem 1.75rem 1.75rem;
+    }
+    .pd-hero::after {
+        content:""; position:absolute; right:-90px; top:-90px; width:260px; height:260px; border-radius:50%;
+        box-shadow:0 0 0 38px rgba(255,255,255,.05), 0 0 0 78px rgba(255,255,255,.04);
+        pointer-events:none;
+    }
+    .pd-hero > * { position:relative; z-index:1; }
+    .pd-hero .lbl { font-size:1rem; color:#C4CEFF; margin:0; }
+    .pd-numero { font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:clamp(4.2rem,9vw,6.5rem); line-height:.95; letter-spacing:-.04em; margin:.35rem 0 .5rem; }
+    .pd-hero .det { color:#C4CEFF; margin:0 0 1.25rem; }
+    .pd-hero .det b { color:#fff; font-weight:600; }
+    .pd-dona { position:relative; height:190px; margin:0 auto 1rem; }
+    .pd-leyenda { list-style:none; margin:0; padding:0; font-size:.9rem; }
+    .pd-leyenda li { display:flex; align-items:center; gap:.6rem; padding:.28rem 0; }
+    .pd-leyenda i { width:10px; height:10px; border-radius:50%; flex:none; }
+    .pd-leyenda .n { flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .pd-leyenda .v { font-weight:600; }
+
+    .pd-barras { background:#fff; border-radius:8px 28px 28px 28px; padding:1.75rem 1.75rem 1.25rem; height:100%; }
+    .pd-barras h2 { font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:1.3rem; letter-spacing:-.01em; margin:0 0 .2rem; }
+    .pd-barras > p { color:var(--suave); font-size:.92rem; margin:0 0 1.1rem; }
+    .pd-lienzo { position:relative; width:100%; }
+
+    .pd-lectura { display:grid; grid-template-columns:repeat(3,1fr); margin-top:1.5rem; }
+    .pd-lectura > div { padding:.25rem 1.5rem; border-left:3px solid var(--cobalto); }
+    .pd-lectura > div:nth-child(2) { border-left-color:var(--amarillo); }
+    .pd-lectura > div:nth-child(3) { border-left-color:#A8B8FF; }
+    .pd-lectura strong { display:block; font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:2rem; line-height:1.15; }
+    .pd-lectura span { color:var(--suave); font-size:.92rem; }
+
+    @media (max-width:767px) {
+        .pd { padding:1.1rem; border-radius:20px; }
+        .pd-lectura { grid-template-columns:1fr; gap:1rem; }
+        .pd-lectura > div { padding-left:1rem; }
+    }
+</style>
+
+<div class="container py-4">
+  <div class="pd">
+    <div class="pd-titulo">
+        <h1>Bienvenido al sistema</h1>
+        <p>Así se distribuyen los productos entre tus proveedores.</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="pd-hero">
+                <p class="lbl">Productos registrados</p>
+                <div class="pd-numero" id="pd_total" data-valor="<?= $total ?>">0</div>
+                <p class="det">en <b><?= $numProv ?></b> proveedores</p>
+                <div class="pd-dona"><canvas id="pd_dona"></canvas></div>
+                <ul class="pd-leyenda">
+                    <?php foreach ($dona as $i => $d): ?>
+                    <li><i style="background:<?= $coloresDona[$i] ?>"></i>
+                        <span class="n"><?= htmlspecialchars($d[0]) ?></span>
+                        <span class="v"><?= $total ? round($d[1] * 100 / $total) : 0 ?>%</span></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="pd-barras">
+                <h2>Productos por proveedor</h2>
+                <p>De mayor a menor. El proveedor con más productos va en amarillo.</p>
+                <div class="pd-lienzo" id="pd_caja"><canvas id="pd_barras"></canvas></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="pd-lectura">
+        <div><strong><?= $promedio ?></strong><span>productos por proveedor, en promedio</span></div>
+        <div><strong><?= $pctLider ?>%</strong><span>del catálogo es de <?= htmlspecialchars($lider[0]) ?></span></div>
+        <div><strong><?= $bajoProm ?></strong><span>proveedores están por debajo del promedio</span></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script>
+(function () {
+    const filas = <?= json_encode($filas, JSON_UNESCAPED_UNICODE) ?>;
+    const dona  = <?= json_encode($dona, JSON_UNESCAPED_UNICODE) ?>;
+    const coloresDona = <?= json_encode($coloresDona) ?>;
+    const reducir = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const elTotal = document.getElementById('pd_total');
+    const meta = parseInt(elTotal.dataset.valor, 10) || 0;
+    if (reducir || meta === 0) {
+        elTotal.textContent = meta;
+    } else {
+        const t0 = performance.now(), dur = 1100;
+        (function paso(t) {
+            const p = Math.min((t - t0) / dur, 1);
+            elTotal.textContent = Math.round(meta * (1 - Math.pow(1 - p, 3)));
+            if (p < 1) requestAnimationFrame(paso);
+        })(t0);
+    }
+
+    if (!filas.length) {
+        document.getElementById('pd_caja').textContent = 'Aún no hay proveedores con productos.';
+        return;
+    }
+
+    Chart.defaults.font.family = 'Figtree, sans-serif';
+    if (reducir) Chart.defaults.animation = false;
+
+    new Chart(document.getElementById('pd_dona'), {
+        type: 'doughnut',
+        data: {
+            labels: dona.map(d => d[0]),
+            datasets: [{data: dona.map(d => d[1]), backgroundColor: coloresDona,
+                        borderColor: '#1B2AB5', borderWidth: 3, hoverOffset: 6}]
+        },
+        options: {maintainAspectRatio: false, cutout: '66%', plugins: {legend: {display: false}}}
+    });
+
+    const degradado = (ctx, i) => {
+        const area = ctx.chart.chartArea;
+        if (!area) return '#2438E0';
+        if (i === 0) return '#FFC93C';
+        const g = ctx.chart.ctx.createLinearGradient(area.left, 0, area.right, 0);
+        g.addColorStop(0, '#16238F'); g.addColorStop(1, '#6F86FF');
+        return g;
+    };
+    const valores = {
+        id: 'valores',
+        afterDatasetsDraw(chart) {
+            const c = chart.ctx; c.save();
+            c.font = '600 13px Figtree, sans-serif'; c.fillStyle = '#10163A'; c.textBaseline = 'middle';
+            chart.getDatasetMeta(0).data.forEach((b, i) => c.fillText(chart.data.datasets[0].data[i], b.x + 9, b.y));
+            c.restore();
+        }
+    };
+
+    document.getElementById('pd_caja').style.height = Math.max(320, filas.length * 44 + 40) + 'px';
+    new Chart(document.getElementById('pd_barras'), {
+        type: 'bar',
+        data: {
+            labels: filas.map(f => f[0]),
+            datasets: [{
+                label: 'Productos', data: filas.map(f => f[1]),
+                backgroundColor: ctx => degradado(ctx, ctx.dataIndex),
+                borderRadius: 10, borderSkipped: false, barPercentage: 0.7
+            }]
+        },
+        options: {
+            indexAxis: 'y', maintainAspectRatio: false,
+            layout: {padding: {right: 34}},
+            plugins: {legend: {display: false}},
+            scales: {
+                x: {beginAtZero: true, ticks: {precision: 0, color: '#5A6286'}, grid: {color: '#EDEFF8'}, border: {display: false}},
+                y: {grid: {display: false}, border: {display: false}, ticks: {color: '#10163A', font: {size: 13}}}
+            }
+        },
+        plugins: [valores]
+    });
+})();
+</script>

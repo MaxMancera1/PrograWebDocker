@@ -1,0 +1,27 @@
+<h1>Usuarios</h1>
+<a href="usuario.php?accion=create" class="btn btn-primary">Nuevo usuario</a>
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Usuario</th>
+        <th scope="col">Correo</th>
+        <th scope="col">Opciones</th>
+      </tr>
+    </thead>
+    <tbody>
+<?php foreach ($usuarios as $usuario): ?>
+<tr>
+    <th scope="row"><?php echo $usuario['id']; ?></th>
+    <td><?php echo htmlspecialchars($usuario['usuario']); ?></td>
+    <td><?php echo htmlspecialchars($usuario['email']); ?></td>
+    <td>
+        <div class="btn-group">
+            <a href="usuario.php?accion=update&id=<?php echo $usuario['id']; ?>" class="btn btn-primary">Editar</a>
+            <a href="usuario.php?accion=delete&id=<?php echo $usuario['id']; ?>" class="btn btn-danger">Eliminar</a>
+        </div>
+    </td>
+</tr>
+<?php endforeach; ?>
+    </tbody>
+</table>

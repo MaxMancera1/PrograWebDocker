@@ -1,0 +1,5 @@
+<?php if (isset($alerta['mensaje'], $alerta['tipo'])): ?>
+<div class="alert alert-<?php echo htmlspecialchars($alerta['tipo']); ?>" role="alert">
+    <p class="mb-0"><?php echo htmlspecialchars($alerta['mensaje']); ?></p>
+</div>
+<?php endif; ?>

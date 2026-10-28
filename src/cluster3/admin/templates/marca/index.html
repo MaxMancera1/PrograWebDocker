@@ -1,0 +1,30 @@
+<h1>Marcas</h1>
+<a href="marca.php?accion=create" class="btn btn-primary">Nueva Marca</a>
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Logo</th>
+        <th scope="col">Marca</th>
+        <th scope="col">Proveedor</th>
+      </tr>
+    </thead>
+    <tbody>
+<?php foreach($marcas as $marca):?>
+<tr>
+    <th scope="row"><?php echo $marca['id']; ?></th>
+    <td>
+      <img src="../img/uploads/<?php echo htmlspecialchars($marca['logo']); ?>?v=<?php echo @filemtime(__DIR__ . '/../../../img/uploads/' . $marca['logo']); ?>" alt="" width="48" height="48" style="width:48px;height:48px;object-fit:cover;border-radius:50%;display:block;background:#f1f3f5;border:1px solid #dee2e6">
+    </td>
+    <td><?php echo $marca['marca'];?></td>
+    <td><?php echo htmlspecialchars($marca['proveedor'] ?? ''); ?></td>
+    <td>
+        <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+            <a href="marca.php?accion=update&id=<?php echo $marca['id']; ?>" class="btn btn-primary">Editar</a>
+            <a href="marca.php?accion=delete&id=<?php echo $marca['id']; ?>" class="btn btn-danger">Eliminar</a>
+        </div>
+    </td>
+  </tr>
+<?php endforeach;?>
+    </tbody>
+</table>

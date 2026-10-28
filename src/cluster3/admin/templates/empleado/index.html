@@ -1,0 +1,33 @@
+<h1>Empleados</h1>
+<a href="empleado.php?accion=create" class="btn btn-primary">Nuevo empleado</a>
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Nombre</th>
+        <th scope="col">Primer Apellido</th>
+        <th scope="col">Segundo Apellido</th>
+        <th scope="col">RFC</th>
+        <th scope="col">Correo</th>
+        <th scope="col">Opciones</th>
+      </tr>
+    </thead>
+    <tbody>
+<?php foreach ($empleados as $empleado): ?>
+<tr>
+    <th scope="row"><?php echo $empleado['id_empleado']; ?></th>
+    <td><?php echo htmlspecialchars($empleado['nombre']); ?></td>
+    <td><?php echo htmlspecialchars($empleado['primer_apellido']); ?></td>
+    <td><?php echo htmlspecialchars($empleado['segundo_apellido']); ?></td>
+    <td><?php echo htmlspecialchars($empleado['rfc']); ?></td>
+    <td><?php echo htmlspecialchars($empleado['correo']); ?></td>
+    <td>
+        <div class="btn-group">
+            <a href="empleado.php?accion=update&id=<?php echo $empleado['id_empleado']; ?>" class="btn btn-primary">Editar</a>
+            <a href="empleado.php?accion=delete&id=<?php echo $empleado['id_empleado']; ?>" class="btn btn-danger">Eliminar</a>
+        </div>
+    </td>
+</tr>
+<?php endforeach; ?>
+    </tbody>
+</table>

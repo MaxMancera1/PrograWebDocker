@@ -1,0 +1,10 @@
+    <form action="login.php?accion=enviar_correo" method="post">
+    <?php require_once __DIR__ . '/../rbac/alert.html'; ?>
+    <h2>Recuperar contraseña</h2>
+    <p class="lead-text">Ingresa tu correo para recuperar tu contraseña</p>
+            <div class="mb-3">
+            <label class="form-label" for="correo">Correo</label>
+            <input type="email" name="correo" id="correo" class="form-control" required>
+        </div>
+            <input type="submit" class="btn btn-entrar" name="enviar" value="Recuperar">
+    </form>

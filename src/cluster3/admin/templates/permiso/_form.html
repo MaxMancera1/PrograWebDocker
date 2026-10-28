@@ -1,0 +1,7 @@
+<form action="permiso.php?accion=<?php echo $accion; echo isset($datos['id_permiso']) ? '&id=' . $datos['id_permiso'] : ''; ?>" method="post">
+    <div class="mb-3">
+        <label class="form-label" for="permiso">Permiso</label>
+        <input type="text" name="data[permiso]" id="permiso" class="form-control" value="<?php echo htmlspecialchars($datos['permiso'] ?? ''); ?>" required>
+    </div>
+    <input type="submit" class="btn btn-success" name="enviar" value="Guardar">
+</form>

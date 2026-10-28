@@ -1,0 +1,27 @@
+<form action="usuario.php?accion=<?php echo $accion; echo isset($datos['id']) ? '&id=' . $datos['id'] : ''; ?>" method="post">
+<?php
+$campos = [
+    'usuario' => 'Usuario',
+    'email' => 'Correo',
+    'password' => 'Contraseña',
+    
+];
+foreach ($campos as $name => $label):
+    $type = $name === 'password' ? 'password' : ($name === 'email' ? 'email' : 'text');
+?>
+    <div class="mb-3">
+        <label class="form-label" for="<?php echo $name; ?>"><?php echo $label; ?></label>
+        <input type="<?php echo $type; ?>" name="data[<?php echo $name; ?>]" id="<?php echo $name; ?>" class="form-control" value="<?php echo htmlspecialchars($datos[$name] ?? ''); ?>" required>
+    </div>
+<?php endforeach; ?>
+    <div class="mb-3">
+        <label class="form-label d-block">Roles</label>
+        <?php foreach ($roles as $rol): ?>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="roles[]" id="rol-<?php echo $rol['id_rol']; ?>" value="<?php echo $rol['id_rol']; ?>" <?php echo in_array((int) $rol['id_rol'], $rolesUsuario, true) ? 'checked' : ''; ?>>
+            <label class="form-check-label" for="rol-<?php echo $rol['id_rol']; ?>"><?php echo htmlspecialchars($rol['rol']); ?></label>
+        </div>
+        <?php endforeach; ?>
+    </div>
+    <input type="submit" class="btn btn-success" name="enviar" value="Guardar">
+</form>

@@ -1,0 +1,7 @@
+<form action="rol.php?accion=<?php echo $accion; echo isset($datos['id_rol']) ? '&id=' . $datos['id_rol'] : ''; ?>" method="post">
+    <div class="mb-3">
+        <label class="form-label" for="rol">Rol</label>
+        <input type="text" name="data[rol]" id="rol" class="form-control" value="<?php echo htmlspecialchars($datos['rol'] ?? ''); ?>" required>
+    </div>
+    <input type="submit" class="btn btn-success" name="enviar" value="Guardar">
+</form>
