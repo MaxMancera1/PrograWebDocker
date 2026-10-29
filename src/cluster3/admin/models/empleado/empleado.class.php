@@ -54,7 +54,17 @@ class Empleado extends Sistema {
             return ['error' => 'Foto no encontrada'];
         }
 
-        $this->db->beginTransaction(); 
+        $stmt = $this->db->prepare("SELECT id_rol FROM rol WHERE rol = :rol");
+        $nombreRol = 'Empleado';
+        $stmt->bindParam(':rol', $nombreRol, PDO::PARAM_STR);
+        $stmt->execute();
+        $idRol = $stmt->fetchColumn();
+        if (!$idRol) {
+            return ['error' => 'Error al crear el empleado'];
+        }
+
+        $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->db->beginTransaction();
         try  {
             $sql = "INSERT INTO usuario (correo, contrasena) VALUES(:correo, :contrasena) ";
             $stmt = $this->db->prepare($sql);
@@ -62,21 +72,12 @@ class Empleado extends Sistema {
             $contrasena = md5($data['contrasena']);
             $stmt->bindParam(":contrasena", $contrasena, PDO::PARAM_STR);
             $stmt->execute();
-           
-
-            $sql = "SELECT id_usuario FROM usuario WHERE correo = :correo";
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(":correo", $data['correo'], PDO::PARAM_STR);
-            $stmt->execute();
-            $idUsuario = $stmt->fetch(PDO::FETCH_ASSOC);
-            $idUsuario = $idUsuario['id_usuario'];
-            
+            $idUsuario = (int) $this->db->lastInsertId();
 
             $sql = "INSERT INTO usuario_rol (id_usuario, id_rol) VALUES(:id_usuario, :id_rol) ";
             $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(":id_usuario", $idUsuario, PDO::PARAM_INT);
-            $idRol = 2;
-            $stmt->bindParam(":id_rol", $idRol, PDO::PARAM_INT);
+            $stmt->bindValue(":id_usuario", $idUsuario, PDO::PARAM_INT);
+            $stmt->bindValue(":id_rol", $idRol, PDO::PARAM_INT);
             $stmt->execute();
          
 
@@ -94,11 +95,12 @@ class Empleado extends Sistema {
             $this->db->commit();
             return ['success' => 'Empleado creado correctamente'];
         }
-        catch (PDOException $e) {
-            $this->db->rollBack();
+        catch (Throwable $e) {
+            if ($this->db->inTransaction()) {
+                $this->db->rollBack();
+            }
             return ['error' => 'Error al crear el empleado'];
         }
-        return ['error' => 'Error desconocido'];
     }
     
     function getOne($id){
