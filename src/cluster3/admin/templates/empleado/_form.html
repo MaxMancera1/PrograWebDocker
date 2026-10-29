@@ -86,6 +86,26 @@
     background: #14342b;
     color: #fff;
   }
+  .datos-usuario .btn-foto {
+    width: 100%;
+    margin-top: .5rem;
+    border: 1px solid #1f4d3a;
+    border-radius: 999px;
+    padding: .8rem 1rem;
+    background: transparent;
+    color: #1f4d3a;
+    font-family: system-ui, sans-serif;
+    letter-spacing: .04em;
+  }
+  .datos-usuario .camara {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+    margin: 0 auto .75rem;
+    background: #efe8dc;
+  }
   .datos-usuario .alert {
     font-family: system-ui, sans-serif;
     border: 0;
@@ -106,7 +126,7 @@
     <h1>Datos de empleado.</h1>
   </section>
   <main class="form-side">
-    <form action="empleado.php?accion=create" method="post">
+    <form action="empleado.php?accion=create" method="post" enctype="multipart/form-data">
       <?php require_once __DIR__ . '/../rbac/alert.html'; ?>
       <h2>Datos de Empleado</h2>
       <p class="lead-text">Completa los datos para continuar.</p>
@@ -144,7 +164,69 @@
         <label class="form-label" for="contrasena">Contraseña</label>
         <input type="password" name="contrasena" id="contrasena" class="form-control" required>
       </div>
+      <div class="mb-3">
+        <label class="form-label">Foto</label>
+        <video id="cam" class="camara" autoplay playsinline hidden></video>
+        <canvas id="snap" hidden></canvas>
+        <img id="fotoPreview" class="camara" alt="Foto del empleado" hidden>
+        <input type="file" name="foto" id="foto" accept="image/jpeg" hidden>
+        <button type="button" class="btn btn-foto" id="btnFoto">Tomar foto</button>
+      </div>
       <input type="submit" class="btn btn-entrar" name="enviar" value="Guardar">
     </form>
+    <script>
+    (function () {
+      var video = document.getElementById('cam');
+      var canvas = document.getElementById('snap');
+      var preview = document.getElementById('fotoPreview');
+      var input = document.getElementById('foto');
+      var btn = document.getElementById('btnFoto');
+      var stream = null;
+
+      btn.addEventListener('click', function () {
+        if (!stream) {
+          navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } }).then(function (s) {
+            stream = s;
+            video.srcObject = s;
+            video.hidden = false;
+            preview.hidden = true;
+            btn.textContent = 'Capturar';
+          }).catch(function () {
+            btn.textContent = 'Cámara no disponible';
+          });
+          return;
+        }
+        var w = video.videoWidth || 640;
+        var h = video.videoHeight || 480;
+        var max = 800;
+        if (w > max) {
+          h = Math.round(h * max / w);
+          w = max;
+        }
+        canvas.width = w;
+        canvas.height = h;
+        canvas.getContext('2d').drawImage(video, 0, 0, w, h);
+        canvas.toBlob(function (blob) {
+          var file = new File([blob], 'empleado-' + Date.now() + '.jpg', { type: 'image/jpeg' });
+          var data = new DataTransfer();
+          data.items.add(file);
+          input.files = data.files;
+          preview.src = URL.createObjectURL(blob);
+          preview.hidden = false;
+          video.hidden = true;
+          stream.getTracks().forEach(function (track) { track.stop(); });
+          stream = null;
+          btn.textContent = 'Tomar otra';
+        }, 'image/jpeg', 0.9);
+      });
+
+      document.querySelector('.datos-usuario form').addEventListener('submit', function (event) {
+        if (!input.files || !input.files.length) {
+          event.preventDefault();
+          btn.textContent = 'Toma la foto antes de guardar';
+        }
+      });
+    })();
+    </script>
   </main>
 </div>

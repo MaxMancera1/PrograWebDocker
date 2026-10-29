@@ -18,11 +18,13 @@
               <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="index.php">Inicio</a>
               </li>
+              <?php if (in_array('Administrador', $_SESSION['roles'] ?? [], true)): ?>
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                   Catalogos
                 </a>
                 <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="empleado.php">Empleados</a></li>
                   <li><a class="dropdown-item" href="proveedor.php">Proveedores</a></li>
                   <li><a class="dropdown-item" href="marca.php">Marcas</a></li>
                   <li><a class="dropdown-item" href="producto.php">Productos</a></li>
@@ -31,6 +33,7 @@
                   <li><a class="dropdown-item" href="rol.php">Roles</a></li>
                 </ul>
               </li>
+              <?php endif; ?>
               <li class="nav-item">
                 <a class="btn btn-outline-danger" href="login.php?accion=logout">Cerrar sesión</a>
               </li>

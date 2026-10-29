@@ -1,5 +1,6 @@
 <h1>Empleados</h1>
 <a href="empleado.php?accion=create" class="btn btn-primary">Nuevo empleado</a>
+<a href="empleado.php?accion=reporte" class="btn btn-outline-success" target="_blank">Reporte PDF</a>
 <table class="table">
     <thead>
       <tr>
@@ -9,6 +10,7 @@
         <th scope="col">Segundo Apellido</th>
         <th scope="col">RFC</th>
         <th scope="col">Correo</th>
+        <th scope="col">Foto</th>
         <th scope="col">Opciones</th>
       </tr>
     </thead>
@@ -21,9 +23,11 @@
     <td><?php echo htmlspecialchars($empleado['segundo_apellido']); ?></td>
     <td><?php echo htmlspecialchars($empleado['rfc']); ?></td>
     <td><?php echo htmlspecialchars($empleado['correo']); ?></td>
+    <td><?php if (!empty($empleado['tiene_foto'])): ?><img src="empleado.php?accion=foto&id=<?php echo $empleado['id_empleado']; ?>" alt="" width="48" height="48" style="width:48px;height:48px;object-fit:cover;border-radius:50%;display:block"><?php endif; ?></td>
     <td>
         <div class="btn-group">
             <a href="empleado.php?accion=update&id=<?php echo $empleado['id_empleado']; ?>" class="btn btn-primary">Editar</a>
+            <a href="empleado.php?accion=credencial&id=<?php echo $empleado['id_empleado']; ?>" class="btn btn-success" target="_blank">Credencial</a>
             <a href="empleado.php?accion=delete&id=<?php echo $empleado['id_empleado']; ?>" class="btn btn-danger">Eliminar</a>
         </div>
     </td>

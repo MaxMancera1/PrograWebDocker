@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
+    fonts-dejavu-core \
     libcurl4-openssl-dev \
     libzip-dev \
     libxml2-dev \

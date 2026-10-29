@@ -105,9 +105,12 @@ use PHPMailer\PHPMailer\SMTP;
         return true;
     }
 
-    function checarRol($rol){
-    if(isset($_SESSION['roles']) && in_array($rol, $_SESSION['roles'])){
-        return true;
+    function checarRol(...$roles){
+    $asignados = $_SESSION['roles'] ?? [];
+    foreach ($roles as $rol) {
+        if (in_array($rol, $asignados, true)) {
+            return true;
+        }
     }
         $alerta['tipo'] = 'danger';
         $alerta['mensaje'] = 'No tienes permisos para acceder a esta página';
